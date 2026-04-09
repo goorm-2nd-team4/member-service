@@ -27,6 +27,7 @@ repositories {
 dependencies {
 	// 기존 설정
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
@@ -43,9 +44,6 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
 tasks.named('test') {
 	useJUnitPlatform()
 }
