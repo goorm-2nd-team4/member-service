@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>저장 완료</title>
+    <link rel="stylesheet" th:href="@{/css/member.css}">
+</head>
+<body>
+<main class="shell shell-narrow">
+    <section class="card result-card">
+        <p class="eyebrow">Saved</p>
+        <h1>회원 정보가 저장되었습니다.</h1>
+
+        <dl class="result-grid">
+            <div>
+                <dt>이메일</dt>
+                <dd th:text="${member.email}"></dd>
+            </div>
+            <div>
+                <dt>이름</dt>
+                <dd th:text="${member.name}"></dd>
+            </div>
+            <div>
+                <dt>나이</dt>
+                <dd th:text="${member.age}"></dd>
+            </div>
+        </dl>
+
+        <div class="hero-actions">
+            <a class="primary-button" th:href="@{/members}">회원 목록 보기</a>
+            <a class="ghost-button" th:href="@{/members/new-form}">다시 등록</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>
