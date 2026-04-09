@@ -1,46 +1,133 @@
-# Getting Started with Create React App
+# 🔐 Auth (Login / Register) 구현 (전성우)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 📌 작업 범위
 
-## Available Scripts
+* 로그인 (`/login`)
+* 회원가입 (`/register`)
+* 인증 토큰 저장
+* API 구조 구성 (Mock 기반)
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 📁 프로젝트 구조
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+src
+ ├── api
+ │   ├── axios.ts        # API 설정 (baseURL, interceptor)
+ │   └── mock.ts         # Mock API (현재 테스트용)
+ ├── components
+ │   ├── Button.tsx
+ │   ├── InputField.tsx
+ │   └── Header.tsx
+ ├── pages
+ │   ├── Login.tsx       # 로그인 페이지
+ │   ├── Register.tsx    # 회원가입 페이지
+ │   └── Members.tsx     # (임시) 로그인 후 이동 페이지
+ ├── utils
+ │   └── auth.ts         # 인증 유틸 (logout 등)
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+---
 
-### `npm test`
+## 🔑 인증 흐름
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### ✔ 로그인
 
-### `npm run build`
+1. 이메일 / 비밀번호 입력
+2. Mock API 호출 (`mockLogin`)
+3. 성공 시:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+   * localStorage에 token 저장
+   * `/members` 이동
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### ✔ 회원가입
 
-### `npm run eject`
+1. 입력값 검증 (비밀번호 일치)
+2. Mock API 호출 (`mockRegister`)
+3. 성공 시 `/login` 이동
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+---
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🧠 토큰 처리 구조
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### ✔ 저장
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```id="tok123"
+localStorage.setItem("token", token);
+```
 
-## Learn More
+### ✔ 자동 포함 (axios)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```id="tok456"
+Authorization: Bearer {token}
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+👉 `axios.ts`에서 interceptor로 자동 처리됨
+
+---
+
+## 🚪 로그아웃
+
+```ts id="logout123"
+import { logout } from "../utils/auth";
+
+logout();
+```
+
+👉 Members 페이지에서 사용하면 됨
+
+---
+
+## ⚙️ Mock → 실제 API 변경 방법
+
+```id="change123"
+// 현재
+mockLogin()
+
+// 변경
+api.post("/auth/login")
+```
+
+👉 이 부분만 바꾸면 백엔드 연결 완료
+
+---
+
+## 🧪 테스트 계정
+
+```id="test123"
+email: test@test.com
+password: 1234
+```
+
+---
+
+## ⚠️ 협업 주의사항
+
+* `/members` 페이지는 다른 팀원 담당
+* 로그인 성공 시 이동만 처리되어 있음
+* 인증 로직 (token, interceptor)은 공통 사용
+
+---
+
+## 🎯 팀원이 작업할 때
+
+### 📌 Members 페이지에서 해야 할 것
+
+```ts id="member123"
+import { logout } from "../utils/auth";
+
+const handleLogout = () => {
+  logout();
+  navigate("/login");
+};
+```
+
+---
+
+## 💡 요약
+
+* 로그인/회원가입 → 완성 상태
+* 인증 흐름 → 구축 완료
+* Mock → 실제 API로 쉽게 교체 가능
