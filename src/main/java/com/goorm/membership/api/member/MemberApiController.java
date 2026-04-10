@@ -1,5 +1,6 @@
 package com.goorm.membership.api.member;
 
+import com.goorm.membership.config.JwtUtil;
 import com.goorm.membership.entity.Member;
 import com.goorm.membership.dto.common.ApiResponse;
 import com.goorm.membership.dto.member.request.LoginRequest;
@@ -20,9 +21,11 @@ import java.util.List;
 public class MemberApiController {
 
     private final MemberService memberService;
+    private final JwtUtil jwtUtil;
 
-    public MemberApiController(MemberService memberService) {
+    public MemberApiController(MemberService memberService, JwtUtil jwtUtil) {
         this.memberService = memberService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/auth/register")
@@ -35,7 +38,8 @@ public class MemberApiController {
     @PostMapping("/auth/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         Member member = memberService.login(request);
-        return ResponseEntity.ok(ApiResponse.success("로그인 성공", LoginResponse.from(member)));
+        String token = jwtUtil.generateToken(member.getEmail());
+        return ResponseEntity.ok(ApiResponse.success("로그인 성공", LoginResponse.from(member,token)));
     }
 
     @GetMapping("/members")
