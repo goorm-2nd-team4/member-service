@@ -11,6 +11,7 @@
 
 ## 📁 프로젝트 구조
 
+```
 src
  ├── api
  │   ├── axios.ts        # API 설정 (baseURL, interceptor)
