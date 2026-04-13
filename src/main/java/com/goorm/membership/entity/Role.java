@@ -1,4 +1,4 @@
-package com.goorm.membership.Model;
+package com.goorm.membership.entity;
 
 public enum Role {
     USER,

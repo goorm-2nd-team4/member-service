@@ -1,6 +1,6 @@
 package com.goorm.membership.Controller;
 
-import com.goorm.membership.Model.Member;
+import com.goorm.membership.entity.Member;
 import com.goorm.membership.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

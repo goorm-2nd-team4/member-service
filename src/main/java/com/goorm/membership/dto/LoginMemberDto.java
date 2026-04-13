@@ -1,7 +1,7 @@
 package com.goorm.membership.dto;
 
-import com.goorm.membership.Model.Member;
-import com.goorm.membership.Model.Role;
+import com.goorm.membership.entity.Member;
+import com.goorm.membership.entity.Role;
 import lombok.Getter;
 
 @Getter

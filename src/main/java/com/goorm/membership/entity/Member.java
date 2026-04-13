@@ -1,4 +1,4 @@
-package com.goorm.membership.Model;
+package com.goorm.membership.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -7,10 +7,10 @@ import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "members")
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotBlank
     private Long id;
 
     @NotBlank
@@ -26,7 +26,6 @@ public class Member {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @NotBlank
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20, columnDefinition = "varchar(20) default 'USER'")
     private Role role;

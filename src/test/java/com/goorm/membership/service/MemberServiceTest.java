@@ -1,7 +1,7 @@
 package com.goorm.membership.service;
 
-import com.goorm.membership.Model.Member;
-import com.goorm.membership.Model.Role;
+import com.goorm.membership.entity.Member;
+import com.goorm.membership.entity.Role;
 import com.goorm.membership.dto.LoginRequestDto;
 import com.goorm.membership.dto.SignupRequestDto;
 import com.goorm.membership.exception.DuplicateEmailException;

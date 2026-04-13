@@ -1,6 +1,6 @@
 package com.goorm.membership.repository;
 
-import com.goorm.membership.Model.Member;
+import com.goorm.membership.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

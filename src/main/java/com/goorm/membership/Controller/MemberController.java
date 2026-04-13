@@ -1,6 +1,6 @@
 package com.goorm.membership.Controller;
 
-import com.goorm.membership.Model.Member;
+import com.goorm.membership.entity.Member;
 import com.goorm.membership.service.MemberService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
