@@ -1,8 +1,7 @@
 :root {
-  font-family: 'Pretendard', system-ui, -apple-system, sans-serif; /* 더 현대적인 프리텐다드 폰트 권장 */
+  font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
   line-height: 1.6;
-  
-  /* 브랜드 컬러 정의 (Toss 느낌의 Vibrant Blue) */
+
   --primary-color: #007aff;
   --primary-hover: #006ae6;
   --primary-active: #0056b3;
@@ -18,26 +17,31 @@
   color: var(--text-main);
 }
 
-body, html {
+*, *::before, *::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+body, html {
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: var(--bg-light);
 }
 
-/* 메인 컨테이너: 링크처럼 하얀색 카드 느낌 */
 .auth-container {
-  width: 100%;
-  max-width: 440px;
+  width: 480px;        /* 560px → 480px */
+  min-height: 520px;   /* 600px → 520px */
   background-color: var(--card-light);
-  padding: 3.5rem;
-  border-radius: 24px; /* 더 둥글게 */
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05); /* 부드럽고 넓은 그림자 */
-  text-align: left; /* 왼쪽 정렬이 더 전문적으로 보임 */
-  transition: transform 0.3s ease;
+  padding: 2.5rem 3rem; /* 3rem 4rem → 2.5rem 3rem */
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 h2 {
@@ -45,69 +49,64 @@ h2 {
   font-weight: 800;
   margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
+  color: var(--text-main);
 }
 
 .auth-subtitle {
   color: var(--text-muted);
   font-size: 1rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
-/* 입력 필드 그룹 */
 .input-group {
-  margin-bottom: 1.8rem;
+  margin-bottom: 0.9rem;
 }
 
 .input-group label {
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
-  margin-bottom: 0.6rem;
-  margin-left: 0.2rem;
+  margin-bottom: 0.4rem;
 }
 
-input {
+.input-group input {
   width: 100%;
-  padding: 14px 18px;
+  padding: 12px 16px;
   border-radius: 14px;
-  border: 1px solid #e0e0e0; /* 연한 테두리 */
+  border: 1px solid #e0e0e0;
   background-color: #fff;
   color: var(--text-main);
   font-size: 1rem;
-  box-sizing: border-box;
   transition: all 0.2s ease;
 }
 
-input::placeholder {
+.input-group input::placeholder {
   color: #c0c0c0;
 }
 
-input:focus {
+.input-group input:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
 }
 
-/* 에러 메시지 - input 아래에 표시 */
 .input-error {
-  font-size: 0.85rem; /* 작게 */
-  color: #ff4d4f;     /* 빨간색 강조 */
-  margin-top: 0.3rem; /* input과 간격 */
-  min-height: 1.2em;  /* 레이아웃 유지 */
-}
-
-/* 성공 메시지 (선택) */
-.input-success {
   font-size: 0.85rem;
-  color: #28a745;     /* 녹색 */
+  color: #ff4d4f;
   margin-top: 0.3rem;
   min-height: 1.2em;
 }
 
-/* 버튼 스타일: 더 둥글고 강렬한 포인트 블루 */
+.input-success {
+  font-size: 0.85rem;
+  color: #28a745;
+  margin-top: 0.3rem;
+  min-height: 1.2em;
+}
+
 button {
   width: 100%;
-  padding: 16px;
+  padding: 14px;
   border-radius: 16px;
   border: none;
   background-color: var(--primary-color);
@@ -121,7 +120,7 @@ button {
 
 button:hover {
   background-color: var(--primary-hover);
-  transform: translateY(-2px); /* 살짝 떠오르는 효과 */
+  transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(0, 122, 255, 0.2);
 }
 
@@ -130,7 +129,7 @@ button:active {
 }
 
 .auth-footer {
-  margin-top: 2.5rem;
+  margin-top: 2rem;
   text-align: center;
   font-size: 0.9rem;
   color: var(--text-muted);
@@ -146,9 +145,8 @@ a:hover {
   text-decoration: underline;
 }
 
-/* 다크 모드 */
 @media (prefers-color-scheme: dark) {
-  :root {
+  body, html {
     background-color: var(--bg-dark);
     color: #fff;
   }
@@ -158,11 +156,13 @@ a:hover {
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
-  input {
+  .input-group input {
     background-color: var(--bg-dark);
     border: 1px solid #333;
     color: #fff;
   }
 
-  h2 { color: #fff; }
+  h2 {
+    color: #fff;
+  }
 }

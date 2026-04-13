@@ -8,7 +8,7 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = ({ children, onClick, type = "button" }) => {
   return (
-    <button type={type} onClick={onClick} style={{ padding: "0.5rem 1rem", cursor: "pointer" }}>
+    <button type={type} onClick={onClick}>
       {children}
     </button>
   );

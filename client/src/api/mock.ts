@@ -10,9 +10,14 @@ export const mockLogin = (email: string, password: string) => {
   });
 };
 
-export const mockRegister = (email: string, password: string) => {
-  return new Promise((resolve) => {
+export const mockRegister = (
+  name: string,
+  email: string,
+  password: string
+) => {
+  return new Promise<{ message: string }>((resolve) => {
     setTimeout(() => {
+      console.log("회원가입:", { name, email, password });
       resolve({ message: "회원가입 성공" });
     }, 500);
   });
