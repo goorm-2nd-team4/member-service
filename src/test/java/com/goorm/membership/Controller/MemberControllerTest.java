@@ -1,6 +1,8 @@
 package com.goorm.membership.Controller;
 
 import com.goorm.membership.Model.Member;
+import com.goorm.membership.Model.Role;
+import com.goorm.membership.dto.LoginRequestDto;
 import com.goorm.membership.dto.SignupRequestDto;
 import com.goorm.membership.exception.DuplicateEmailException;
 import com.goorm.membership.service.MemberService;
@@ -53,11 +55,57 @@ class MemberControllerTest {
         mockMvc.perform(post("/members/save")
                         .param("email", "goorm@example.com")
                         .param("password", "password123")
-                        .param("name", "구름")
-                        .param("age", "20"))
+                        .param("name", "구름"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"))
                 .andExpect(flash().attribute("message", "회원가입이 완료되었습니다."));
+    }
+
+    @Test
+    void login_redirectsToLoginSuccess_whenUserCredentialsAreValid() throws Exception {
+        Member member = new Member();
+        member.setEmail("user@example.com");
+        member.setPassword("password123");
+        member.setName("일반회원");
+        member.setRole(Role.USER);
+
+        given(memberService.login(any(LoginRequestDto.class))).willReturn(java.util.Optional.of(member));
+
+        mockMvc.perform(post("/members/login")
+                        .param("email", "user@example.com")
+                        .param("password", "password123"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login-success"))
+                .andExpect(flash().attribute("memberName", "일반회원"));
+    }
+
+    @Test
+    void login_redirectsToMembers_whenAdminCredentialsAreValid() throws Exception {
+        Member member = new Member();
+        member.setEmail("admin@example.com");
+        member.setPassword("admin1234");
+        member.setName("관리자");
+        member.setRole(Role.ADMIN);
+
+        given(memberService.login(any(LoginRequestDto.class))).willReturn(java.util.Optional.of(member));
+
+        mockMvc.perform(post("/members/login")
+                        .param("email", "admin@example.com")
+                        .param("password", "admin1234"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/members"));
+    }
+
+    @Test
+    void login_returnsLoginView_whenCredentialsAreInvalid() throws Exception {
+        given(memberService.login(any(LoginRequestDto.class))).willReturn(java.util.Optional.empty());
+
+        mockMvc.perform(post("/members/login")
+                        .param("email", "user@example.com")
+                        .param("password", "wrong-password"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("login"))
+                .andExpect(model().attributeExists("loginError"));
     }
 
     @Test
@@ -65,16 +113,14 @@ class MemberControllerTest {
         mockMvc.perform(post("/members/save")
                         .param("email", "not-an-email")
                         .param("password", "")
-                        .param("name", "")
-                        .param("age", "-1"))
+                        .param("name", ""))
                 .andExpect(status().isOk())
                 .andExpect(view().name("new-form"))
                 .andExpect(model().attributeHasFieldErrors(
                         "signupRequest",
                         "email",
                         "password",
-                        "name",
-                        "age"
+                        "name"
                 ));
     }
 
@@ -87,8 +133,7 @@ class MemberControllerTest {
         mockMvc.perform(post("/members/save")
                         .param("email", "goorm@example.com")
                         .param("password", "password123")
-                        .param("name", "구름")
-                        .param("age", "20"))
+                        .param("name", "구름"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("new-form"))
                 .andExpect(model().attributeHasFieldErrors("signupRequest", "email"));
@@ -100,7 +145,6 @@ class MemberControllerTest {
         member.setId(1L);
         member.setEmail("goorm@example.com");
         member.setName("구름");
-        member.setAge(20);
 
         given(memberService.findAll()).willReturn(List.of(member));
 

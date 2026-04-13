@@ -2,6 +2,7 @@ package com.goorm.membership.service;
 
 import com.goorm.membership.Model.Member;
 import com.goorm.membership.Model.Role;
+import com.goorm.membership.dto.LoginRequestDto;
 import com.goorm.membership.dto.SignupRequestDto;
 import com.goorm.membership.exception.DuplicateEmailException;
 import com.goorm.membership.repository.MemberRepository;
@@ -34,7 +35,6 @@ class MemberServiceTest {
         savedMember.setEmail(request.getEmail());
         savedMember.setPassword(request.getPassword());
         savedMember.setName(request.getName());
-        savedMember.setAge(request.getAge());
         savedMember.setRole(Role.USER);
 
         given(memberRepository.existsByEmail("goorm@example.com")).willReturn(false);
@@ -58,12 +58,28 @@ class MemberServiceTest {
                 .hasMessage("이미 사용 중인 이메일입니다.");
     }
 
+    @Test
+    void login_returnsMember_whenCredentialsMatch() {
+        LoginRequestDto request = new LoginRequestDto();
+        request.setEmail("goorm@example.com");
+        request.setPassword("password123");
+
+        Member member = new Member();
+        member.setEmail(request.getEmail());
+        member.setPassword(request.getPassword());
+        member.setRole(Role.USER);
+
+        given(memberRepository.findByEmailAndPassword("goorm@example.com", "password123"))
+                .willReturn(java.util.Optional.of(member));
+
+        assertThat(memberService.login(request)).contains(member);
+    }
+
     private SignupRequestDto createRequest() {
         SignupRequestDto request = new SignupRequestDto();
         request.setEmail("goorm@example.com");
         request.setPassword("password123");
         request.setName("구름");
-        request.setAge(20);
         return request;
     }
 }
