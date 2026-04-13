@@ -1,11 +1,15 @@
 package com.goorm.membership.Controller;
 
-import com.goorm.membership.domain.Member;
-import com.goorm.membership.domain.Role;
-import com.goorm.membership.repository.MemberRepository;
+import com.goorm.membership.Model.Member;
+import com.goorm.membership.dto.SignupRequestDto;
+import com.goorm.membership.exception.DuplicateEmailException;
+import com.goorm.membership.service.MemberService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -13,41 +17,44 @@ import java.util.List;
 @RequestMapping("/members")
 public class MemberController {
 
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
-    public MemberController(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
     }
 
     @GetMapping("/new-form")
-    public String newForm() {
+    public String newForm(Model model) {
+        if (!model.containsAttribute("signupRequest")) {
+            model.addAttribute("signupRequest", new SignupRequestDto());
+        }
         return "new-form";
     }
 
     @PostMapping("/save")
     public String save(
-            @RequestParam("email") String email,
-            @RequestParam("password") String password,
-            @RequestParam("name") String name,
-            @RequestParam("age") int age,
-            Model model) {
+            @Valid @ModelAttribute("signupRequest") SignupRequestDto signupRequest,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
 
-        Member member = new Member();
+        if (bindingResult.hasErrors()) {
+            return "new-form";
+        }
 
-        member.setEmail(email);
-        member.setPassword(password);
-        member.setName(name);
-        member.setAge(age);
-        member.setRole(Role.USER);
+        try {
+            memberService.signup(signupRequest);
+        } catch (DuplicateEmailException ex) {
+            bindingResult.rejectValue("email", "duplicate", ex.getMessage());
+            return "new-form";
+        }
 
-        memberRepository.save(member);
-        model.addAttribute("member", member);
-        return "save-result";
+        redirectAttributes.addFlashAttribute("message", "회원가입이 완료되었습니다.");
+        return "redirect:/";
     }
 
     @GetMapping
     public String members(Model model) {
-        List<Member> members = memberRepository.findAll();
+        List<Member> members = memberService.findAll();
         model.addAttribute("members", members);
         return "members";
     }

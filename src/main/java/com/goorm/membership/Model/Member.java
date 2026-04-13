@@ -1,7 +1,8 @@
-package com.goorm.membership.domain;
+package com.goorm.membership.Model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
@@ -16,15 +17,12 @@ public class Member {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @NotBlank
     @Column(nullable = false)
     private String password;
 
-    @NotBlank
     @Column(nullable = false, length = 50)
     private String name;
 
-    @NotNull
     @Column(nullable = false)
     private Integer age;
 

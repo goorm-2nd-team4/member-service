@@ -1,4 +1,4 @@
-package com.goorm.membership.domain;
+package com.goorm.membership.Model;
 
 public enum Role {
     USER,
