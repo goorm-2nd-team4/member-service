@@ -5,6 +5,8 @@ import com.goorm.membership.Model.Role;
 import com.goorm.membership.dto.LoginRequestDto;
 import com.goorm.membership.dto.SignupRequestDto;
 import com.goorm.membership.exception.DuplicateEmailException;
+import com.goorm.membership.exception.InvalidPasswordException;
+import com.goorm.membership.exception.MemberNotFoundException;
 import com.goorm.membership.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -72,11 +74,11 @@ class MemberServiceTest {
         given(memberRepository.findByEmail("goorm@example.com"))
                 .willReturn(java.util.Optional.of(member));
 
-        assertThat(memberService.login(request)).contains(member);
+        assertThat(memberService.login(request)).isSameAs(member);
     }
 
     @Test
-    void login_returnsEmpty_whenPasswordDoesNotMatch() {
+    void login_throwsException_whenPasswordDoesNotMatch() {
         LoginRequestDto request = new LoginRequestDto();
         request.setEmail("goorm@example.com");
         request.setPassword("wrong-password");
@@ -89,11 +91,13 @@ class MemberServiceTest {
         given(memberRepository.findByEmail("goorm@example.com"))
                 .willReturn(java.util.Optional.of(member));
 
-        assertThat(memberService.login(request)).isEmpty();
+        assertThatThrownBy(() -> memberService.login(request))
+                .isInstanceOf(InvalidPasswordException.class)
+                .hasMessage("비밀번호가 일치하지 않습니다.");
     }
 
     @Test
-    void login_returnsEmpty_whenMemberDoesNotExist() {
+    void login_throwsException_whenMemberDoesNotExist() {
         LoginRequestDto request = new LoginRequestDto();
         request.setEmail("missing@example.com");
         request.setPassword("password123");
@@ -101,7 +105,9 @@ class MemberServiceTest {
         given(memberRepository.findByEmail("missing@example.com"))
                 .willReturn(java.util.Optional.empty());
 
-        assertThat(memberService.login(request)).isEmpty();
+        assertThatThrownBy(() -> memberService.login(request))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessage("존재하지 않는 회원입니다.");
     }
 
     private SignupRequestDto createRequest() {

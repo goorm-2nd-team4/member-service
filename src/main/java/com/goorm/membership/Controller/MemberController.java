@@ -1,10 +1,8 @@
 package com.goorm.membership.Controller;
 
-import com.goorm.membership.Model.Member;
-import com.goorm.membership.Model.Role;
-import com.goorm.membership.dto.LoginRequestDto;
-import com.goorm.membership.dto.SignupRequestDto;
-import com.goorm.membership.exception.DuplicateEmailException;
+import com.goorm.membership.Model.*;
+import com.goorm.membership.dto.*;
+import com.goorm.membership.exception.*;
 import com.goorm.membership.service.MemberService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/members")
@@ -66,13 +63,14 @@ public class MemberController {
             return "login";
         }
 
-        Optional<Member> loginMember = memberService.login(loginRequest);
-        if (loginMember.isEmpty()) {
-            model.addAttribute("loginError", "이메일 또는 비밀번호가 올바르지 않습니다.");
+        final Member member;
+        try {
+            member = memberService.login(loginRequest);
+        } catch (MemberNotFoundException | InvalidPasswordException ex) {
+            model.addAttribute("loginError", ex.getMessage());
             return "login";
         }
 
-        Member member = loginMember.get();
         redirectAttributes.addFlashAttribute("memberName", member.getName());
 
         if (member.getRole() == Role.ADMIN) {

@@ -5,6 +5,8 @@ import com.goorm.membership.Model.Role;
 import com.goorm.membership.dto.LoginRequestDto;
 import com.goorm.membership.dto.SignupRequestDto;
 import com.goorm.membership.exception.DuplicateEmailException;
+import com.goorm.membership.exception.InvalidPasswordException;
+import com.goorm.membership.exception.MemberNotFoundException;
 import com.goorm.membership.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,15 +43,12 @@ public class MemberService {
         return memberRepository.findAll();
     }
 
-    public Optional<Member> login(LoginRequestDto loginRequestDto) {
-        Optional<Member> member = memberRepository.findByEmail(loginRequestDto.getEmail());
+    public Member login(LoginRequestDto loginRequestDto) {
+        Member member = memberRepository.findByEmail(loginRequestDto.getEmail())
+                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 회원입니다."));
 
-        if (member.isEmpty()) {
-            return Optional.empty();
-        }
-
-        if (!member.get().getPassword().equals(loginRequestDto.getPassword())) {
-            return Optional.empty();
+        if (!member.getPassword().equals(loginRequestDto.getPassword())) {
+            throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
 
         return member;

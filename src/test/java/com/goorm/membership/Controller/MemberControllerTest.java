@@ -5,6 +5,8 @@ import com.goorm.membership.Model.Role;
 import com.goorm.membership.dto.LoginRequestDto;
 import com.goorm.membership.dto.SignupRequestDto;
 import com.goorm.membership.exception.DuplicateEmailException;
+import com.goorm.membership.exception.InvalidPasswordException;
+import com.goorm.membership.exception.MemberNotFoundException;
 import com.goorm.membership.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,7 +71,7 @@ class MemberControllerTest {
         member.setName("일반회원");
         member.setRole(Role.USER);
 
-        given(memberService.login(any(LoginRequestDto.class))).willReturn(java.util.Optional.of(member));
+        given(memberService.login(any(LoginRequestDto.class))).willReturn(member);
 
         mockMvc.perform(post("/members/login")
                         .param("email", "user@example.com")
@@ -87,7 +89,7 @@ class MemberControllerTest {
         member.setName("관리자");
         member.setRole(Role.ADMIN);
 
-        given(memberService.login(any(LoginRequestDto.class))).willReturn(java.util.Optional.of(member));
+        given(memberService.login(any(LoginRequestDto.class))).willReturn(member);
 
         mockMvc.perform(post("/members/login")
                         .param("email", "admin@example.com")
@@ -97,15 +99,29 @@ class MemberControllerTest {
     }
 
     @Test
-    void login_returnsLoginView_whenCredentialsAreInvalid() throws Exception {
-        given(memberService.login(any(LoginRequestDto.class))).willReturn(java.util.Optional.empty());
+    void login_returnsLoginView_whenMemberDoesNotExist() throws Exception {
+        given(memberService.login(any(LoginRequestDto.class)))
+                .willThrow(new MemberNotFoundException("존재하지 않는 회원입니다."));
 
         mockMvc.perform(post("/members/login")
                         .param("email", "user@example.com")
                         .param("password", "wrong-password"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("login"))
-                .andExpect(model().attributeExists("loginError"));
+                .andExpect(model().attribute("loginError", "존재하지 않는 회원입니다."));
+    }
+
+    @Test
+    void login_returnsLoginView_whenPasswordDoesNotMatch() throws Exception {
+        given(memberService.login(any(LoginRequestDto.class)))
+                .willThrow(new InvalidPasswordException("비밀번호가 일치하지 않습니다."));
+
+        mockMvc.perform(post("/members/login")
+                        .param("email", "user@example.com")
+                        .param("password", "wrong-password"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("login"))
+                .andExpect(model().attribute("loginError", "비밀번호가 일치하지 않습니다."));
     }
 
     @Test

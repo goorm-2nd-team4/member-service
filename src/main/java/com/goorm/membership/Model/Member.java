@@ -10,6 +10,7 @@ import lombok.Data;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotBlank
     private Long id;
 
     @NotBlank
@@ -17,12 +18,15 @@ public class Member {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
+    @NotBlank
     @Column(nullable = false)
     private String password;
 
+    @NotBlank
     @Column(nullable = false, length = 50)
     private String name;
 
+    @NotBlank
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20, columnDefinition = "varchar(20) default 'USER'")
     private Role role;
