@@ -42,9 +42,16 @@ public class MemberService {
     }
 
     public Optional<Member> login(LoginRequestDto loginRequestDto) {
-        return memberRepository.findByEmailAndPassword(
-                loginRequestDto.getEmail(),
-                loginRequestDto.getPassword()
-        );
+        Optional<Member> member = memberRepository.findByEmail(loginRequestDto.getEmail());
+
+        if (member.isEmpty()) {
+            return Optional.empty();
+        }
+
+        if (!member.get().getPassword().equals(loginRequestDto.getPassword())) {
+            return Optional.empty();
+        }
+
+        return member;
     }
 }

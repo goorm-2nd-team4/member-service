@@ -69,10 +69,39 @@ class MemberServiceTest {
         member.setPassword(request.getPassword());
         member.setRole(Role.USER);
 
-        given(memberRepository.findByEmailAndPassword("goorm@example.com", "password123"))
+        given(memberRepository.findByEmail("goorm@example.com"))
                 .willReturn(java.util.Optional.of(member));
 
         assertThat(memberService.login(request)).contains(member);
+    }
+
+    @Test
+    void login_returnsEmpty_whenPasswordDoesNotMatch() {
+        LoginRequestDto request = new LoginRequestDto();
+        request.setEmail("goorm@example.com");
+        request.setPassword("wrong-password");
+
+        Member member = new Member();
+        member.setEmail("goorm@example.com");
+        member.setPassword("password123");
+        member.setRole(Role.USER);
+
+        given(memberRepository.findByEmail("goorm@example.com"))
+                .willReturn(java.util.Optional.of(member));
+
+        assertThat(memberService.login(request)).isEmpty();
+    }
+
+    @Test
+    void login_returnsEmpty_whenMemberDoesNotExist() {
+        LoginRequestDto request = new LoginRequestDto();
+        request.setEmail("missing@example.com");
+        request.setPassword("password123");
+
+        given(memberRepository.findByEmail("missing@example.com"))
+                .willReturn(java.util.Optional.empty());
+
+        assertThat(memberService.login(request)).isEmpty();
     }
 
     private SignupRequestDto createRequest() {
