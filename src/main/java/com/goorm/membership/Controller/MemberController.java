@@ -1,6 +1,7 @@
 package com.goorm.membership.Controller;
 
 import com.goorm.membership.domain.Member;
+import com.goorm.membership.domain.Role;
 import com.goorm.membership.repository.MemberRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +38,7 @@ public class MemberController {
         member.setPassword(password);
         member.setName(name);
         member.setAge(age);
+        member.setRole(Role.USER);
 
         memberRepository.save(member);
         model.addAttribute("member", member);
