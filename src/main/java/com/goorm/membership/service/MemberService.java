@@ -46,10 +46,11 @@ public class MemberService {
         return memberRepository.findAll();
     }
 
-    public Member findById(Long id) {
-        return memberRepository.findById(id)
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 회원입니다."));
-    }
+//    // 회원 상세 조회 기능은 현재 사용하지 않음
+//    public Member findById(Long id) {
+//        return memberRepository.findById(id)
+//                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 회원입니다."));
+//    }
 
     public Member login(LoginRequest loginRequest) {
         return login(loginRequest.email(), loginRequest.password());

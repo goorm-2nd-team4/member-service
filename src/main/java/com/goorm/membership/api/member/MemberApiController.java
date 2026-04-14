@@ -46,6 +46,7 @@ public class MemberApiController {
         return ResponseEntity.ok(ApiResponse.success("회원 목록 조회 성공", members));
     }
 
+//    // 상세 조회 기능 (보류)
 //    @GetMapping("/members/{id}")
 //    public ResponseEntity<ApiResponse<MemberDetailResponse>> getMember(@PathVariable Long id) {
 //        Member member = memberService.findById(id);

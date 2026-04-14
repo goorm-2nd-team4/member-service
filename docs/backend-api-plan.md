@@ -1,91 +1,25 @@
-# Member Service Backend Plan
+# 회원 API 문서
 
-## 1. Goal
+이 문서는 현재 코드 기준으로 동작하는 회원 API만 정리한다.
 
-- This project will use a separated structure:
-  - React client: screen rendering, routing, form state, API calls
-  - Spring Boot backend: member domain logic, validation, DB access, JSON API responses
-- Backend should expose REST APIs for the React app instead of rendering Thymeleaf pages.
-- Existing MVC template controllers can remain temporarily, but new development should target the REST API layer.
+## 공통 사항
 
-## 2. Recommended Backend Package Structure
+- Base URL: `/api`
+- 응답 형식은 모두 아래 구조를 사용한다.
 
-```text
-src/main/java/com/goorm/membership
-├── api
-│   └── member
-│       └── MemberApiController
-├── config
-│   └── WebConfig
-├── dto
-│   ├── common
-│   │   └── ApiResponse
-│   └── member
-│       ├── request
-│       │   ├── LoginRequest
-│       │   └── RegisterRequest
-│       └── response
-│           ├── LoginResponse
-│           ├── MemberDetailResponse
-│           └── MemberSummaryResponse
-├── exception
-│   ├── DuplicateEmailException
-│   ├── GlobalExceptionHandler
-│   ├── InvalidPasswordException
-│   └── MemberNotFoundException
-├── Model
-│   ├── Member
-│   └── Role
-├── repository
-│   └── MemberRepository
-└── service
-    └── MemberService
+```json
+{
+  "message": "응답 메시지",
+  "data": {}
+}
 ```
 
-## 3. Class List
+## 1. 회원가입
 
-### Existing classes reused
+- 메서드: `POST`
+- URL: `/api/auth/register`
 
-- `Model.Member`
-  - Member entity
-- `Model.Role`
-  - Member role enum
-- `repository.MemberRepository`
-  - JPA repository for member persistence
-- `service.MemberService`
-  - Member business logic
-- `exception.DuplicateEmailException`
-- `exception.InvalidPasswordException`
-- `exception.MemberNotFoundException`
-
-### New classes to add
-
-- `api.member.MemberApiController`
-  - REST endpoints for register, login, member list, member detail
-- `dto.common.ApiResponse`
-  - Common JSON response wrapper
-- `dto.member.request.RegisterRequest`
-  - Request body for register API
-- `dto.member.request.LoginRequest`
-  - Request body for login API
-- `dto.member.response.MemberSummaryResponse`
-  - Member list item response
-- `dto.member.response.MemberDetailResponse`
-  - Member detail response
-- `dto.member.response.LoginResponse`
-  - Login success response
-- `exception.GlobalExceptionHandler`
-  - Validation and business exception response mapping
-- `config.WebConfig`
-  - CORS config for React client
-
-## 4. API Specification
-
-### 4.1 Register
-
-- Method: `POST`
-- URL: `/api/members/register`
-- Request
+### 요청 본문
 
 ```json
 {
@@ -96,7 +30,9 @@ src/main/java/com/goorm/membership
 }
 ```
 
-- Success response: `201 Created`
+### 성공 응답
+
+- 상태 코드: `201 Created`
 
 ```json
 {
@@ -110,11 +46,43 @@ src/main/java/com/goorm/membership
 }
 ```
 
-### 4.2 Login
+### 요청 검증
 
-- Method: `POST`
-- URL: `/api/members/login`
-- Request
+- `email`: 필수, 이메일 형식
+- `password`: 필수
+- `confirmPassword`: 필수
+- `name`: 필수
+- `password`와 `confirmPassword`는 일치해야 한다.
+
+### 실패 응답 예시
+
+- 상태 코드: `400 Bad Request`
+
+```json
+{
+  "message": "입력값이 올바르지 않습니다.",
+  "data": {
+    "email": "형식이 올바르지 않습니다.",
+    "name": "이름은 필수입니다."
+  }
+}
+```
+
+- 상태 코드: `409 Conflict`
+
+```json
+{
+  "message": "이미 사용 중인 이메일입니다.",
+  "data": null
+}
+```
+
+## 2. 로그인
+
+- 메서드: `POST`
+- URL: `/api/auth/login`
+
+### 요청 본문
 
 ```json
 {
@@ -123,7 +91,9 @@ src/main/java/com/goorm/membership
 }
 ```
 
-- Success response: `200 OK`
+### 성공 응답
+
+- 상태 코드: `200 OK`
 
 ```json
 {
@@ -137,11 +107,50 @@ src/main/java/com/goorm/membership
 }
 ```
 
-### 4.3 Member list
+### 요청 검증
 
-- Method: `GET`
+- `email`: 필수, 이메일 형식
+- `password`: 필수
+
+### 실패 응답 예시
+
+- 상태 코드: `400 Bad Request`
+
+```json
+{
+  "message": "입력값이 올바르지 않습니다.",
+  "data": {
+    "email": "형식이 올바르지 않습니다."
+  }
+}
+```
+
+- 상태 코드: `401 Unauthorized`
+
+```json
+{
+  "message": "비밀번호가 일치하지 않습니다.",
+  "data": null
+}
+```
+
+- 상태 코드: `404 Not Found`
+
+```json
+{
+  "message": "존재하지 않는 회원입니다.",
+  "data": null
+}
+```
+
+## 3. 회원 목록 조회
+
+- 메서드: `GET`
 - URL: `/api/members`
-- Success response: `200 OK`
+
+### 성공 응답
+
+- 상태 코드: `200 OK`
 
 ```json
 {
@@ -152,79 +161,18 @@ src/main/java/com/goorm/membership
       "email": "goorm@example.com",
       "name": "구름",
       "role": "USER"
+    },
+    {
+      "id": 2,
+      "email": "admin@example.com",
+      "name": "관리자",
+      "role": "ADMIN"
     }
   ]
 }
 ```
 
-### 4.4 Member detail
+## 4. 비고
 
-- Method: `GET`
-- URL: `/api/members/{id}`
-- Success response: `200 OK`
-
-```json
-{
-  "message": "회원 상세 조회 성공",
-  "data": {
-    "id": 1,
-    "email": "goorm@example.com",
-    "name": "구름",
-    "role": "USER"
-  }
-}
-```
-
-## 5. Error Response Rule
-
-All API errors should use a consistent JSON shape.
-
-```json
-{
-  "message": "이미 사용 중인 이메일입니다.",
-  "data": null
-}
-```
-
-Validation errors should also return field-specific messages.
-
-```json
-{
-  "message": "입력값이 올바르지 않습니다.",
-  "data": {
-    "email": "형식이 올바르지 않습니다.",
-    "password": "비밀번호는 필수값입니다."
-  }
-}
-```
-
-## 6. DB Fields
-
-`member`
-
-- `id` bigint PK auto increment
-- `email` varchar(100) not null unique
-- `password` varchar(255) not null
-- `name` varchar(50) not null
-- `role` varchar(20) not null default `USER`
-
-## 7. Work Order
-
-1. Define REST package structure and response policy
-2. Add request/response DTOs
-3. Extend service methods for REST use cases
-4. Add `MemberApiController`
-5. Add global exception handling
-6. Add CORS config for React local server
-7. Add tests
-8. Connect React request/response fields
-
-## 8. Notes for Team Coordination
-
-- Frontend should call only `/api/**` endpoints.
-- Template pages such as `/join`, `/login`, `/members` are legacy MVC flow and should not be used by React.
-- Password encryption and JWT can be added later by the auth/security owner.
-- Before security is added, login API should focus on:
-  - finding a member by email
-  - checking password match
-  - returning success or failure response
+- 현재 활성화된 회원 API : 회원가입, 로그인, 회원 목록 조회
+- (회원 상세 조회 API는 현재  동작하지 않음.)
