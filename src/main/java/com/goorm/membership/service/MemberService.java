@@ -1,11 +1,9 @@
 package com.goorm.membership.service;
 
-import com.goorm.membership.entity.Member;
-import com.goorm.membership.entity.Role;
-import com.goorm.membership.dto.LoginRequestDto;
-import com.goorm.membership.dto.SignupRequestDto;
 import com.goorm.membership.dto.member.request.LoginRequest;
 import com.goorm.membership.dto.member.request.RegisterRequest;
+import com.goorm.membership.entity.Member;
+import com.goorm.membership.entity.Role;
 import com.goorm.membership.exception.DuplicateEmailException;
 import com.goorm.membership.exception.InvalidPasswordException;
 import com.goorm.membership.exception.MemberNotFoundException;
@@ -23,11 +21,6 @@ public class MemberService {
 
     public MemberService(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
-    }
-
-    @Transactional
-    public Member signup(SignupRequestDto requestDto) {
-        return signup(requestDto.getEmail(), requestDto.getPassword(), requestDto.getName());
     }
 
     @Transactional
@@ -56,10 +49,6 @@ public class MemberService {
     public Member findById(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 회원입니다."));
-    }
-
-    public Member login(LoginRequestDto loginRequestDto) {
-        return login(loginRequestDto.getEmail(), loginRequestDto.getPassword());
     }
 
     public Member login(LoginRequest loginRequest) {

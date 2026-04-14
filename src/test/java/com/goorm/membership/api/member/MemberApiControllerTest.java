@@ -98,7 +98,7 @@ class MemberApiControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("입력값이 올바르지 않습니다."))
                 .andExpect(jsonPath("$.data.email").value("형식이 올바르지 않습니다."))
-                .andExpect(jsonPath("$.data.name").value("이름은 필수값입니다."));
+                .andExpect(jsonPath("$.data.name").value("이름은 필수입니다."));
     }
 
     @Test
