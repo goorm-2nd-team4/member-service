@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.goorm.membership.repository.MemberRepository;
 
 import java.util.List;
 
@@ -22,10 +23,14 @@ public class MemberApiController {
 
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
+    private final MemberRepository memberRepository;
 
-    public MemberApiController(MemberService memberService, JwtUtil jwtUtil) {
+    public MemberApiController(MemberService memberService,
+                               JwtUtil jwtUtil,
+                               MemberRepository memberRepository) {
         this.memberService = memberService;
         this.jwtUtil = jwtUtil;
+        this.memberRepository = memberRepository;
     }
 
     @PostMapping("/auth/register")
@@ -56,4 +61,29 @@ public class MemberApiController {
 //        Member member = memberService.findById(id);
 //        return ResponseEntity.ok(ApiResponse.success("회원 상세 조회 성공", MemberDetailResponse.from(member)));
 //    }
+
+
+
+    // 추가
+    @PostMapping("/members")
+    public ResponseEntity<ApiResponse<Member>> createMember(@RequestBody Member member) {
+        return ResponseEntity.ok(ApiResponse.success("추가 성공", memberRepository.save(member)));
+    }
+
+    // 삭제
+    @DeleteMapping("/members/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteMember(@PathVariable Long id) {
+        memberRepository.deleteById(id);
+        return ResponseEntity.ok(ApiResponse.success("삭제 성공", null));
+    }
+
+    // 수정
+    @PutMapping("/members/{id}")
+    public ResponseEntity<ApiResponse<Member>> updateMember(@PathVariable Long id,
+                                                            @RequestBody Member updateData) {
+        Member member = memberRepository.findById(id).orElseThrow();
+        member.setName(updateData.getName());
+        member.setAge(updateData.getAge());
+        return ResponseEntity.ok(ApiResponse.success("수정 성공", memberRepository.save(member)));
+    }
 }
