@@ -26,48 +26,65 @@ public class MemberService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /* =========================
+       회원가입
+    ========================= */
     @Transactional
     public Member signup(RegisterRequest request) {
-        return signup(request.email(), request.password(), request.name());
-    }
 
-    private Member signup(String email, String password, String name) {
-        if (memberRepository.existsByEmail(email)) {
+        if (memberRepository.existsByEmail(request.email())) {
             throw new DuplicateEmailException("이미 사용 중인 이메일입니다.");
         }
 
         Member member = new Member();
-        member.setEmail(email);
-        member.setPassword(passwordEncoder.encode(password)); // 암호화 후 저장
-        member.setName(name);
+        member.setEmail(request.email());
+        member.setPassword(passwordEncoder.encode(request.password()));
+        member.setName(request.name());
         member.setRole(Role.USER);
 
         return memberRepository.save(member);
     }
 
+    /* =========================
+       전체 조회
+    ========================= */
     public List<Member> findAll() {
         return memberRepository.findAll();
     }
 
-//    // 회원 상세 조회 기능은 현재 사용하지 않음
-//    public Member findById(Long id) {
-//        return memberRepository.findById(id)
-//                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 회원입니다."));
-//    }
-
+    /* =========================
+       로그인
+    ========================= */
     public Member login(LoginRequest loginRequest) {
-        return login(loginRequest.email(), loginRequest.password());
-    }
-
-    private Member login(String email, String password) {
-        Member member = memberRepository.findByEmail(email)
+        Member member = memberRepository.findByEmail(loginRequest.email())
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 회원입니다."));
 
-        // 암호화 된 password 비교
-        if (!passwordEncoder.matches(password, member.getPassword())) {
+        if (!passwordEncoder.matches(loginRequest.password(), member.getPassword())) {
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
 
         return member;
+    }
+
+    /* =========================
+       수정
+    ========================= */
+    @Transactional
+    public Member update(Long id, RegisterRequest request) {
+
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFoundException("회원 없음"));
+
+        member.setName(request.name());
+
+        return member;
+    }
+
+    /* =========================
+       삭제
+    ========================= */
+    @Transactional
+    public void delete(Long id) {
+        memberRepository.deleteById(id);
     }
 }

@@ -1,20 +1,22 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { mockRegister } from "../api/mock";
+import api from "../api/axios"; 
 import Button from "../components/Button";
 import InputField from "../components/InputField";
 
 const Register: React.FC = () => {
-  const [name, setName] = useState(""); 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // ✅ (유지) 프론트 기본 validation
     if (!name.trim()) {
       setError("성명을 입력해주세요.");
       return;
@@ -28,12 +30,17 @@ const Register: React.FC = () => {
     try {
       setError("");
 
-    
-      await mockRegister(name, email, password);
+      await api.post("/api/auth/register", {
+        name,
+        email,
+        password,
+        confirmPassword,
+      });
 
-      navigate("/login");
-    } catch {
+      navigate("/login"); 
+    } catch (err) {
       setError("회원가입 실패");
+      console.error(err);
     }
   };
 
@@ -41,7 +48,7 @@ const Register: React.FC = () => {
     <div className="auth-container">
       <h2>회원가입</h2>
 
-      <form onSubmit={handleRegister}>       
+      <form onSubmit={handleRegister}>
         <InputField
           label="성명"
           value={name}
@@ -68,9 +75,7 @@ const Register: React.FC = () => {
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
 
-        <p className="input-error">
-          {error || "\u00A0"}
-        </p>
+        <p className="input-error">{error || "\u00A0"}</p>
 
         <Button type="submit">회원가입</Button>
       </form>
