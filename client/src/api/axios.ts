@@ -7,6 +7,7 @@ const api = axios.create({
   },
 });
 
+// JWT 자동 첨부
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 

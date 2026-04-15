@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { mockLogin } from "../api/mock"; 
+import { useNavigate, Link } from "react-router-dom"; 
 import Button from "../components/Button";
 import InputField from "../components/InputField";
+import api from "../api/axios";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -12,15 +12,30 @@ const Login: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
       setError("");
 
-      const res = await mockLogin(email, password); 
+      const res = await api.post("/api/auth/login", {
+        email,
+        password,
+      });
 
-      localStorage.setItem("token", res.token);
-      navigate("/members"); // 회원관리 페이지 이동
+      localStorage.setItem("token", res.data.data.token);
+      navigate("/members"); 
+
     } catch (err: any) {
-      setError(err);
+      console.error(err);
+
+      const status = err.response?.status;
+
+      if (status === 401) {
+        setError("비밀번호가 일치하지 않습니다.");
+      } else if (status === 404) {
+        setError("존재하지 않는 회원입니다.");
+      } else {
+        setError("로그인 실패");
+      }
     }
   };
 
@@ -28,8 +43,18 @@ const Login: React.FC = () => {
     <div className="auth-container">
       <h2>로그인</h2>
       <form onSubmit={handleLogin}>
-        <InputField label="이메일" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <InputField label="비밀번호" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <InputField 
+          label="이메일" 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+        />
+
+        <InputField 
+          label="비밀번호" 
+          type="password" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+        />
 
         <p className="input-error">{error || "\u00A0"}</p>
 

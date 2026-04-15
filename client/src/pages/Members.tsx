@@ -8,7 +8,7 @@ interface Member {
   id: number;
   email: string;
   name: string;
-  age: number;
+  role: string;
 }
 
 const Members: React.FC = () => {
@@ -16,18 +16,16 @@ const Members: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 1. 로그인 체크: 토큰 없으면 로그인 페이지로 쫓아냄
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
       return;
     }
 
-    // 2. 백엔드에서 회원 목록 가져오기
     const fetchMembers = async () => {
       try {
         const res = await api.get("/api/members");
-        setMembers(res.data);
+        setMembers(res.data.data);
       } catch (err) {
         console.error("데이터 로딩 실패", err);
       }
@@ -54,7 +52,6 @@ const Members: React.FC = () => {
             <th style={{ padding: "12px", textAlign: "left" }}>ID</th>
             <th style={{ padding: "12px", textAlign: "left" }}>이메일</th>
             <th style={{ padding: "12px", textAlign: "left" }}>성함</th>
-            <th style={{ padding: "12px", textAlign: "left" }}>나이</th>
           </tr>
         </thead>
         <tbody>
@@ -64,7 +61,6 @@ const Members: React.FC = () => {
                 <td style={{ padding: "12px" }}>{m.id}</td>
                 <td style={{ padding: "12px" }}>{m.email}</td>
                 <td style={{ padding: "12px" }}>{m.name}</td>
-                <td style={{ padding: "12px" }}>{m.age}</td>
               </tr>
             ))
           ) : (
