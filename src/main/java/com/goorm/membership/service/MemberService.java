@@ -8,6 +8,7 @@ import com.goorm.membership.exception.DuplicateEmailException;
 import com.goorm.membership.exception.InvalidPasswordException;
 import com.goorm.membership.exception.MemberNotFoundException;
 import com.goorm.membership.repository.MemberRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +19,11 @@ import java.util.List;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public MemberService(MemberRepository memberRepository) {
+    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -35,7 +38,7 @@ public class MemberService {
 
         Member member = new Member();
         member.setEmail(email);
-        member.setPassword(password);
+        member.setPassword(passwordEncoder.encode(password)); // 암호화 후 저장
         member.setName(name);
         member.setRole(Role.USER);
 
@@ -60,7 +63,8 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 회원입니다."));
 
-        if (!member.getPassword().equals(password)) {
+        // 암호화 된 password 비교
+        if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
 
