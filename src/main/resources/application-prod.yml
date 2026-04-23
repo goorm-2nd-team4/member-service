@@ -15,3 +15,7 @@ app:
     allowed-origins:
       - http://localhost:3000
       - https://member-service-git-feat-aiven-mysq-0e342f-zhdkffk8210s-projects.vercel.app
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration-ms: 3600000
