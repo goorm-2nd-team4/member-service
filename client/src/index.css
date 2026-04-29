@@ -1,0 +1,295 @@
+:root {
+  font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+
+  --primary-color: #007aff;
+  --primary-hover: #006ae6;
+  --primary-active: #0056b3;
+  --bg-light: #f5f7fa;
+  --bg-dark: #121212;
+  --card-light: #ffffff;
+  --card-dark: #1e1e1e;
+  --text-main: #1a1a1a;
+  --text-muted: #8e8e93;
+
+  color-scheme: light dark;
+  background-color: var(--bg-light);
+  color: var(--text-main);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--bg-light);
+}
+
+.auth-container {
+  width: 480px;        /* 560px → 480px */
+  min-height: 520px;   /* 600px → 520px */
+  background-color: var(--card-light);
+  padding: 2.5rem 3rem; /* 3rem 4rem → 2.5rem 3rem */
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+}
+
+.auth-subtitle {
+  color: var(--text-muted);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.input-group {
+  margin-bottom: 0.9rem;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid #e0e0e0;
+  background-color: #fff;
+  color: var(--text-main);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.input-group input::placeholder {
+  color: #c0c0c0;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
+.input-error {
+  font-size: 0.85rem;
+  color: #ff4d4f;
+  margin-top: 0.3rem;
+  min-height: 1.2em;
+}
+
+.input-success {
+  font-size: 0.85rem;
+  color: #28a745;
+  margin-top: 0.3rem;
+  min-height: 1.2em;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 16px;
+  border: none;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 122, 255, 0.2);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+.auth-footer {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+a {
+  color: var(--primary-color);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+@media (prefers-color-scheme: dark) {
+  body, html {
+    background-color: var(--bg-dark);
+    color: #fff;
+  }
+
+  .auth-container {
+    background-color: var(--card-dark);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .input-group input {
+    background-color: var(--bg-dark);
+    border: 1px solid #333;
+    color: #fff;
+  }
+
+  h2 {
+    color: #fff;
+  }
+}
+
+.members-page {
+  width: 100%;
+  height: 100vh;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--bg-light);
+  overflow: hidden;
+}
+
+/* 헤더 */
+.members-header {
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+  background: var(--card-light);
+  padding: 18px 20px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+
+
+/* 카드 공통 */
+.members-card {
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+  background: var(--card-light);
+  padding: 18px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+}
+
+/* 입력 영역 */
+.form-row {
+  display: flex;
+  gap: 10px;
+  align-items: center; /* 핵심 */
+}
+
+.form-row input {
+  flex: 1;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+  .form-row button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0 20px;
+  height: 36px; 
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* ===== TABLE WRAPPER */
+.table-wrapper {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 테이블 */
+.members-card table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* 헤더 고정 느낌 */
+.members-card thead {
+  position: sticky;
+  top: 0;
+  background: var(--card-light);
+  z-index: 1;
+}
+
+/* body 스크롤 */
+.members-card tbody {
+  display: block;
+  overflow-y: auto;
+  max-height: calc(100vh - 320px);
+}
+
+/* row 정렬 깨짐 방지 */
+.members-card tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.members-card th,
+.members-card td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+/* hover */
+.members-card tr:hover {
+  background: #fafafa;
+}
+
+/* ===== 버튼 크기 강제 통제 ===== */
+.members-page button {
+  width: auto !important;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  border-radius: 8px;
+}
+
+.members-card td:last-child {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}

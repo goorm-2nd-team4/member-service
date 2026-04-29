@@ -1,0 +1,14 @@
+spring.datasource.url=jdbc:mysql://localhost:3306/member_db
+spring.datasource.username=YOUR_USERNAME
+spring.datasource.password=YOUR_PASSWORD
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=true
+
+spring.sql.init.mode=always
+spring.sql.init.schema-locations=classpath:schema.sql
+
+jwt.secret=***
+jwt.expiration-ms = 360000

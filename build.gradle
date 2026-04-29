@@ -1,8 +1,8 @@
 plugins {
 	id 'java'
 	id 'war'
-	id 'org.springframework.boot' version '4.0.5'
-	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.springframework.boot' version '3.3.5'
+	id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'com.goorm'
@@ -10,7 +10,13 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
 	}
 }
 
@@ -19,14 +25,34 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	// 기존 설정
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat-runtime'
-	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
+	// 모델 db 설정
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // DB 연동
+	implementation 'org.springframework.boot:spring-boot-starter-validation' // 데이터 검증
+	runtimeOnly 'com.mysql:mysql-connector-j' // MySQL 연결 드라이버
+
+	// 인증, 보안
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// JWT
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+	// 테스트 관련 설정
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testCompileOnly 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// 인증, 보안
+	implementation 'org.springframework.boot:spring-boot-starter-security'                                                                                                             
+  	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 }
 
 tasks.named('test') {
